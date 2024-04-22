@@ -5,13 +5,6 @@ import "pino-abstract-transport";
 const targets = [];
 
 if (process.env.NODE_ENV === "production") {
-  // targets.push({
-  //   target: 'pino/file',
-  //   options: {
-  //     destination: path.join(process.cwd(), './app.log'),
-  //   },
-  //   level: 'trace',
-  // })
   targets.push({
     target: path.join(process.cwd(), "./src/lib/pino-prisma.mjs"),
     options: {},
@@ -36,6 +29,9 @@ const logger: Logger = pino({
 });
 
 process.on("uncaughtException", (err) => {
+  if (err.message === "the worker has exited") {
+    return;
+  }
   console.error(err);
   if (logger) logger.fatal(err, "uncaught exception detected");
 });
